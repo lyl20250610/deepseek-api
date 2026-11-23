@@ -128,10 +128,6 @@ export const checkForUpdate = (signal: AbortSignal): void => {
   void (async () => {
     try {
       const before = await HotUpdate.getVersion()
-      // 已安装且等待重启的版本不再重复下载
-      if (before.version !== 'builtin' && before.version === __APP_VERSION__) {
-        return
-      }
       const info = await readVersion(signal)
       if (!info) {
         return
