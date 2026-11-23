@@ -1,6 +1,7 @@
 import type {
   ContentBlockDelta,
   MessageStreamEvent,
+  MessageUsage,
   OutputBlockStart,
   TextCitation,
 } from './types.js'
@@ -165,11 +166,47 @@ const readDelta = (value: unknown): ContentBlockDelta | null => {
   }
 }
 
-const isUsage = (value: unknown) =>
+const isCount = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isFinite(value)
+
+const isUsage = (value: unknown): value is Record<string, unknown> =>
   isRecord(value) &&
   ['input_tokens', 'cache_creation_input_tokens', 'cache_read_input_tokens', 'output_tokens'].every(
-    (key) => typeof value[key] === 'number' && Number.isFinite(value[key])
+    (key) => isCount(value[key])
   )
+
+/** 只保留界面会用到的计数字段，避免把服务端的扩展字段原样带入本地存储。 */
+const readUsage = (value: unknown): MessageUsage | undefined => {
+  if (!isUsage(value)) {
+    return undefined
+  }
+  const usage: MessageUsage = {
+    input_tokens: value.input_tokens as number,
+    cache_creation_input_tokens: value.cache_creation_input_tokens as number,
+    cache_read_input_tokens: value.cache_read_input_tokens as number,
+    output_tokens: value.output_tokens as number,
+  }
+  const details = value.output_tokens_details
+  if (isRecord(details)) {
+    usage.output_tokens_details = {
+      ...(isCount(details.thinking_tokens) ? { thinking_tokens: details.thinking_tokens } : {}),
+      ...(isCount(details.safety_tokens) ? { safety_tokens: details.safety_tokens } : {}),
+    }
+  }
+  const tools = value.server_tool_use
+  if (isRecord(tools) && isCount(tools.web_search_requests) && isCount(tools.tool_search)) {
+    usage.server_tool_use = {
+      web_search_requests: tools.web_search_requests,
+      tool_search: tools.tool_search,
+      ...(isCount(tools.web_fetch_requests)
+        ? { web_fetch_requests: tools.web_fetch_requests }
+        : {}),
+      ...(isCount(tools.tool_fetch) ? { tool_fetch: tools.tool_fetch } : {}),
+      ...(isCount(tools.tool_image_search) ? { tool_image_search: tools.tool_image_search } : {}),
+    }
+  }
+  return usage
+}
 
 /** 未识别或无法安全消费的事件静默丢弃，不影响后续有效内容与正常结束。 */
 export const readMessageEvent = (value: unknown): MessageStreamEvent | null => {
@@ -185,7 +222,8 @@ export const readMessageEvent = (value: unknown): MessageStreamEvent | null => {
         ...value,
         message: {
           ...value.message,
-          usage: isUsage(value.message.usage) ? value.message.usage : undefined,
+          model: isString(value.message.model) ? value.message.model : '',
+          usage: readUsage(value.message.usage),
         },
       } as MessageStreamEvent
     case 'content_block_start': {
@@ -220,7 +258,7 @@ export const readMessageEvent = (value: unknown): MessageStreamEvent | null => {
           ...value.delta,
           title: isOptionalString(value.delta.title) ? value.delta.title : undefined,
         },
-        usage: isUsage(value.usage) ? value.usage : undefined,
+        usage: readUsage(value.usage),
       } as MessageStreamEvent
     case 'message_stop':
       break

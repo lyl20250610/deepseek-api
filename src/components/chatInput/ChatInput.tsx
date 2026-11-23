@@ -7,7 +7,15 @@ import {
   IconStopFill16,
   IconThinkOutline14,
 } from '../base/icons.js'
-import { setSearch, setThinking, useSettings } from '../../services/settings.js'
+import {
+  EFFORTS,
+  MODELS,
+  setEffort,
+  setModel,
+  setSearch,
+  setThinking,
+  useSettings,
+} from '../../services/settings.js'
 import { useIsMobile } from '../../app/viewport.js'
 import { sendMessage, stopReply, useChatStore } from '../../services/chat/store.js'
 import {
@@ -22,6 +30,7 @@ import {
 } from '../../services/chat/drafts.js'
 import { stopReadAloud } from '../../services/speech/readAloud.js'
 import { IconButton } from '../base/IconButton.js'
+import { Select } from '../base/Select.js'
 import { Tooltip } from '../base/Tooltip.js'
 import { ensureApiKey } from '../settings/settingsDialogState.js'
 import { DragMask, useFileDrop } from './DragMask.js'
@@ -31,10 +40,17 @@ import { DraftAttachments } from './DraftAttachments.js'
 import { useVoiceInput } from './useVoiceInput.js'
 import { VoiceButton } from './VoiceButton.js'
 import { Spectrum } from './Spectrum.js'
-import { useTranslate } from '../../i18n/index.js'
+import { useTranslate, type TranslationKey } from '../../i18n/index.js'
+import type { ReasoningEffort } from '../../services/api/types.js'
 import styles from './ChatInput.module.css'
 
-/** 输入框：自适应高度的文本框 + 文件 + 深度思考与智能搜索开关 + 语音输入 + 发送 / 停止 */
+const effortLabelKeys: Record<ReasoningEffort, TranslationKey> = {
+  low: 'effortLow',
+  high: 'effortHigh',
+  max: 'effortMax',
+}
+
+/** 输入框：自适应高度的文本框 + 文件 + 模型与思考强度选择 + 深度思考与智能搜索开关 + 语音输入 + 发送 / 停止 */
 export const ChatInput = memo(function ChatInput({ sessionId }: { sessionId: string | null }) {
   // 切换目标时释放录音、转写和 DOM 状态；文字与附件由草稿服务保留。
   return <Input key={sessionId === null ? 'new' : `session:${sessionId}`} sessionId={sessionId} />
@@ -50,6 +66,8 @@ const Input = ({ sessionId }: { sessionId: string | null }) => {
     (state) => sessionId !== null && Object.hasOwn(state.streaming, sessionId)
   )
   const thinking = useSettings((state) => state.thinking)
+  const model = useSettings((state) => state.model)
+  const effort = useSettings((state) => state.effort)
   const importingHistory = useChatStore((state) => state.importingHistory)
   const isMobile = useIsMobile()
   const search = useSettings((state) => state.search)
@@ -200,8 +218,18 @@ const Input = ({ sessionId }: { sessionId: string | null }) => {
         </div>
       </div>
       <div className={styles.functionRow}>
-        {/* 深度思考 / 智能搜索开关，tooltip 在按钮上方 */}
+        {/* 模型 / 思考强度 / 深度思考 / 智能搜索，tooltip 在按钮上方 */}
         <div ref={togglesRef} className={styles.toggles}>
+          <Select
+            ariaLabel={t('settingsModel')}
+            className={styles.modelSelect}
+            value={model}
+            options={MODELS.map((value) => ({
+              value,
+              label: t(value === 'deepseek-v4-pro' ? 'modelProShort' : 'modelFlashShort'),
+            }))}
+            onChange={setModel}
+          />
           <Tooltip content={t('deactivatedThinkTooltip')}>
             <button
               type="button"
@@ -214,6 +242,17 @@ const Input = ({ sessionId }: { sessionId: string | null }) => {
               <span className={styles.toggleLabel}>{t('thinkingSwitch')}</span>
             </button>
           </Tooltip>
+          {thinking ? (
+            <Tooltip content={t('settingsEffort')}>
+              <Select
+                ariaLabel={t('settingsEffort')}
+                className={styles.effortSelect}
+                value={effort}
+                options={EFFORTS.map((value) => ({ value, label: t(effortLabelKeys[value]) }))}
+                onChange={setEffort}
+              />
+            </Tooltip>
+          ) : null}
           <Tooltip content={t('deactivatedSearchTooltip')}>
             <button
               type="button"

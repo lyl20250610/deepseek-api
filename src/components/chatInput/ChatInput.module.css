@@ -255,6 +255,28 @@
   display: none;
 }
 
+/* 模型与思考强度快捷选择器：与开关同高，窄屏只显示短标签 */
+.modelSelect,
+.effortSelect {
+  min-width: 0;
+  height: 34px;
+  padding: 0 22px 0 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 17px;
+  background-color: transparent;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.modelSelect > span:last-child,
+.effortSelect > span:last-child {
+  right: 8px;
+}
+
+.effortSelect {
+  min-width: 50px;
+}
+
 .toggle {
   display: inline-flex;
   flex-shrink: 0;

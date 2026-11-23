@@ -3,6 +3,7 @@ import type { ApiErrorKind } from '../api/client.js'
 import type {
   ChatModel,
   MessageUsage,
+  ReasoningEffort,
   ServerToolBlock,
   StopDetails,
   StopReason,
@@ -77,10 +78,14 @@ export type AssistantMessage = MessageBranch & {
   id: string
   role: 'assistant'
   createdAt: number
-  /** 未记录模型时为 null，续写使用当前默认模型。 */
+  /** 请求时使用的模型；未记录时为 null，续写使用当前默认模型。 */
   model: ChatModel | null
+  /** message_start 返回的实际模型 ID，可能是 Claude 兼容别名；优先于 model 展示。 */
+  responseModel?: string
   /** 请求时是否开启深度思考 */
   thinking?: boolean
+  /** 请求时使用的思考强度快照；历史消息缺省时按默认强度展示。 */
+  effort?: ReasoningEffort
   /** 请求时是否声明 deepseek_web_search；关闭时仍声明 deepseek_read_url */
   search?: boolean
   /** 本轮请求的系统信息快照；各回答版本独立保存，续写沿用。历史消息中缺省的快照保持为空。 */

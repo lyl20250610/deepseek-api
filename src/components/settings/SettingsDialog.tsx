@@ -19,19 +19,25 @@ import { useIsMobile } from '../../app/viewport.js'
 import { useChatStore } from '../../services/chat/store.js'
 import { regionCodes, getRegionName, provinces } from '../../services/location.js'
 import {
+  EFFORTS,
+  MODELS,
   isChineseBrowser,
+  setEffort,
   setLocale,
   setLocation,
+  setModel,
   setThemePreference,
   setTtsVoice,
   useSettings,
   type ThemePreference,
 } from '../../services/settings.js'
 import { useTranslate, type TranslationKey, type TranslationMessage } from '../../i18n/index.js'
+import type { ReasoningEffort } from '../../services/api/types.js'
 import { Button } from '../base/Button.js'
 import { Modal } from '../base/Modal.js'
 import { Select } from '../base/Select.js'
 import { showToast } from '../base/toastState.js'
+import { shareFile } from '../../services/native.js'
 import { ApiKeyConfirm, ApiKeyField, useApiKeyEditor } from './ApiKeyField.js'
 import { closeSettings, useSettingsDialog, type SettingsSection } from './settingsDialogState.js'
 import styles from './Settings.module.css'
@@ -96,6 +102,8 @@ const SettingsContent = () => {
         <div role="tabpanel" className={styles.content}>
           {section === 'general' ? (
             <>
+              <ModelSetting />
+              <EffortSetting />
               <ThemeSetting />
               <LocaleSetting />
               <TtsVoiceSetting />
@@ -129,6 +137,55 @@ const SettingsContent = () => {
       {historyImport.file ? <ImportConfirm historyImport={historyImport} /> : null}
       {historyDelete.opened ? <DeleteAllConfirm historyDelete={historyDelete} /> : null}
     </>
+  )
+}
+
+const effortLabelKeys: Record<ReasoningEffort, TranslationKey> = {
+  low: 'effortLow',
+  high: 'effortHigh',
+  max: 'effortMax',
+}
+
+/** 模型选择：新对话与重新生成使用当前选择，已有回答保留请求时的模型快照。 */
+const ModelSetting = () => {
+  const t = useTranslate()
+  const model = useSettings((state) => state.model)
+  return (
+    <SettingCell
+      label={t('settingsModel')}
+      description={t(model === 'deepseek-v4-pro' ? 'modelPro' : 'modelFlash')}
+      status={null}
+      action={
+        <Select
+          ariaLabel={t('settingsModel')}
+          value={model}
+          options={MODELS.map((value) => ({ value, label: value }))}
+          onChange={setModel}
+        />
+      }
+    />
+  )
+}
+
+/** 思考强度：通过 output_config.effort 传给 Anthropic 兼容接口，关闭深度思考时不生效。 */
+const EffortSetting = () => {
+  const t = useTranslate()
+  const effort = useSettings((state) => state.effort)
+  const thinking = useSettings((state) => state.thinking)
+  return (
+    <SettingCell
+      label={t('settingsEffort')}
+      description={t(thinking ? 'settingsEffortDescription' : 'settingsEffortDisabledHint')}
+      status={null}
+      action={
+        <Select
+          ariaLabel={t('settingsEffort')}
+          value={effort}
+          options={EFFORTS.map((value) => ({ value, label: t(effortLabelKeys[value]) }))}
+          onChange={setEffort}
+        />
+      }
+    />
   )
 }
 
@@ -524,12 +581,15 @@ const ExportHistory = ({ disabled }: { disabled: boolean }) => {
     setStatus(null)
     try {
       const { name, blob } = await exportHistory()
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = name
-      link.click()
-      setTimeout(() => URL.revokeObjectURL(url), 10_000)
+      // Android WebView 不执行 <a download>；原生端改为写入缓存并调起系统分享。
+      if (!(await shareFile(blob, name))) {
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = name
+        link.click()
+        setTimeout(() => URL.revokeObjectURL(url), 10_000)
+      }
     } catch (error) {
       setStatus(errorStatus('historyExportFailed', error))
     } finally {

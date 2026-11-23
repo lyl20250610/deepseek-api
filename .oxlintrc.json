@@ -119,5 +119,13 @@
     "react/no-unknown-property": "error",
     "react/rules-of-hooks": "off",
     "react/exhaustive-deps": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["scripts/**/*.mjs", "tests/**/*.mjs"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
 }

@@ -1,0 +1,110 @@
+.wrapper {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-tertiary);
+  font: inherit;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--ds-transition-duration) var(--ds-ease-in-out);
+
+  > svg {
+    flex-shrink: 0;
+  }
+
+  &:hover,
+  &[aria-expanded='true'] {
+    border-color: var(--dsw-alias-border-l2);
+    background-color: var(--dsw-alias-interactive-bg-hover);
+  }
+}
+
+.model {
+  overflow: hidden;
+  max-width: 180px;
+  color: var(--dsw-alias-label-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.separator {
+  color: var(--dsw-alias-label-dimmed);
+}
+
+.highlight {
+  color: var(--dsw-alias-brand-text);
+  font-weight: 500;
+}
+
+.chevron {
+  display: flex;
+  color: var(--dsw-alias-label-dimmed);
+  transition: transform var(--ds-transition-duration) var(--ds-ease-in-out);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+  width: 320px;
+  max-width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 10px;
+  background-color: var(--dsw-alias-bg-base);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.row,
+.hitRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.value {
+  color: var(--dsw-alias-label-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bar {
+  display: block;
+  flex: 1;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 3px;
+  background-color: var(--dsw-alias-bg-skeleton);
+}
+
+.barFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background-color: var(--dsw-alias-brand-primary);
+}

@@ -63,4 +63,13 @@
     max-width: none;
     border-left: none;
   }
+
+  .header {
+    height: calc(60px + var(--safe-area-inset-top, env(safe-area-inset-top, 0px)));
+    padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  }
+
+  .content {
+    padding-bottom: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  }
 }

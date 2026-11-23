@@ -82,7 +82,11 @@ export const createConfig = ({
     }),
     new rspack.DefinePlugin({ __API_ORIGIN__: JSON.stringify(apiOrigin) }),
     new rspack.CopyRspackPlugin({
-      patterns: [{ from: path.resolve(root, 'LICENSE'), to: 'LICENSE', toType: 'file' }],
+      patterns: [
+        { from: path.resolve(root, 'LICENSE'), to: 'LICENSE', toType: 'file' },
+        // PWA 清单、Service Worker、图标不会被 entry 引用，必须原样复制到 dist。
+        { from: path.resolve(root, 'public'), to: '.', noErrorOnMissing: true },
+      ],
     }),
   ],
   performance: { hints: false },

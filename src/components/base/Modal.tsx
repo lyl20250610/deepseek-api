@@ -7,7 +7,17 @@ import { IconButton } from './IconButton.js'
 import styles from './Modal.module.css'
 
 /** 当前打开的弹窗，后打开的在末尾；叠放时 Esc 只关闭最上层 */
-const openModals: object[] = []
+const openModals: { token: object; close: () => void }[] = []
+
+/** 关闭最上层弹窗；供 Android 返回键等原生入口复用。 */
+export const closeTopModal = () => {
+  const top = openModals.at(-1)
+  if (!top) {
+    return false
+  }
+  top.close()
+  return true
+}
 
 /** 遮罩 + 居中卡片，Esc / 点遮罩关闭 */
 export const Modal = ({
@@ -34,16 +44,16 @@ export const Modal = ({
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
   useEffect(() => {
-    const token = {}
-    openModals.push(token)
+    const entry = { token: {}, close: () => onCloseRef.current() }
+    openModals.push(entry)
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && openModals.at(-1) === token) {
+      if (event.key === 'Escape' && openModals.at(-1)?.token === entry.token) {
         onCloseRef.current()
       }
     }
     document.addEventListener('keydown', onKeyDown)
     return () => {
-      openModals.splice(openModals.indexOf(token), 1)
+      openModals.splice(openModals.indexOf(entry), 1)
       document.removeEventListener('keydown', onKeyDown)
     }
   }, [])

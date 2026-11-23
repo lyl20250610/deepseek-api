@@ -6,6 +6,13 @@
 
 export type ChatModel = 'deepseek-flash' | 'deepseek-v4-pro'
 
+/**
+ * 思考强度。DeepSeek 会把 medium / xhigh 映射到 high、minimal 映射到 low、ultra 映射到 max，
+ * 因此界面只暴露三种实际不同的强度。
+ * 文档：https://api-docs.deepseek.com/zh-cn/guides/thinking_mode
+ */
+export type ReasoningEffort = 'low' | 'high' | 'max'
+
 // ---------- 响应：内容块 ----------
 
 /** 正文引用：服务端把模型的引用标记还原为来源，挂在对应文本块上 */
@@ -177,6 +184,8 @@ export type CreateMessageRequest = {
   system: string
   messages: MessageParam[]
   thinking: { type: 'enabled' | 'disabled' }
+  /** Anthropic 兼容接口的思考强度；显式 thinking.type 仍决定是否开启思考 */
+  output_config?: { effort: ReasoningEffort }
   tools: (DeepseekWebSearchTool | DeepseekReadUrlTool)[]
   safety_check: { level: 'high' }
   title?: { enabled: boolean }
@@ -191,12 +200,21 @@ export type StopDetails = { type: 'refusal'; category: null; explanation: null }
 export type MessageUsage = {
   /** 未命中缓存的输入 Token */
   input_tokens: number
+  /** DeepSeek 由服务端自动管理上下文缓存，该字段固定为 0 */
   cache_creation_input_tokens: number
   cache_read_input_tokens: number
   /** message_start 中为 0，message_delta 中为全轮累计值 */
   output_tokens: number
-  /** 仅当 message_delta 中有对外输出的搜索结果块时出现 */
-  server_tool_use?: { web_search_requests: number; tool_search: number }
+  /** 输出明细；思考或安全审核开启时返回，均包含在 output_tokens 中 */
+  output_tokens_details?: { thinking_tokens?: number; safety_tokens?: number }
+  /** 仅当 message_delta 中有对外输出的工具结果块时出现，均为累计值 */
+  server_tool_use?: {
+    web_search_requests: number
+    tool_search: number
+    web_fetch_requests?: number
+    tool_fetch?: number
+    tool_image_search?: number
+  }
 }
 
 /** content_block_start 携带的初始内容块；工具块已是完整内容 */

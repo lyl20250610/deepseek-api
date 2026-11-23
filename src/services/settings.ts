@@ -1,15 +1,25 @@
 import { create } from 'zustand'
+import type { ChatModel, ReasoningEffort } from './api/types.js'
 import type { TtsVoice } from './api/speech.js'
 import { normalizeLocation, type UserLocation } from './location.js'
+
+export const DEFAULT_MODEL: ChatModel = 'deepseek-flash'
+export const DEFAULT_EFFORT: ReasoningEffort = 'high'
+export const MODELS: ChatModel[] = ['deepseek-flash', 'deepseek-v4-pro']
+export const EFFORTS: ReasoningEffort[] = ['low', 'high', 'max']
+export const isReasoningEffort = (value: unknown): value is ReasoningEffort =>
+  value === 'low' || value === 'high' || value === 'max'
 
 export type Locale = 'zh-CN' | 'en-US'
 
 /** 主题偏好；默认跟随系统 */
 export type ThemePreference = 'light' | 'dark' | 'system'
 
-/** 本机设置，存 localStorage：API Key、语言、主题、位置、朗读音色、深度思考与智能搜索开关、侧边栏收起状态 */
+/** 本机设置，存 localStorage：API Key、模型与思考强度、语言、主题、位置、朗读音色、深度思考与智能搜索开关、侧边栏收起状态 */
 type Settings = {
   apiKey: string | null
+  model: ChatModel
+  effort: ReasoningEffort
   locale: Locale
   themePreference: ThemePreference
   location: UserLocation | null
@@ -21,6 +31,8 @@ type Settings = {
 
 const KEYS = {
   apiKey: 'chat-demo:api-key',
+  model: 'chat-demo:model',
+  effort: 'chat-demo:effort',
   locale: 'chat-demo:locale',
   location: 'chat-demo:location',
   themePreference: 'chat-demo:theme-preference',
@@ -87,8 +99,21 @@ const initialThemePreference = (): ThemePreference => {
 /** 未保存过时使用服务端默认音色 stella（海星） */
 const initialTtsVoice = (): TtsVoice => (read(KEYS.ttsVoice) === 'tide' ? 'tide' : 'stella')
 
+const initialModel = (): ChatModel => {
+  const saved = read(KEYS.model)
+  return MODELS.includes(saved as ChatModel) ? (saved as ChatModel) : DEFAULT_MODEL
+}
+
+/** 与服务端默认一致：思考默认开启，强度默认 high */
+const initialEffort = (): ReasoningEffort => {
+  const saved = read(KEYS.effort)
+  return isReasoningEffort(saved) ? saved : DEFAULT_EFFORT
+}
+
 export const useSettings = create<Settings>(() => ({
   apiKey: read(KEYS.apiKey),
+  model: initialModel(),
+  effort: initialEffort(),
   locale: initialLocale(),
   location: initialLocation(),
   themePreference: initialThemePreference(),
@@ -122,6 +147,16 @@ export const setTtsVoice = (ttsVoice: TtsVoice) => {
 export const setApiKey = (apiKey: string | null) => {
   write(KEYS.apiKey, apiKey)
   useSettings.setState({ apiKey })
+}
+
+export const setModel = (model: ChatModel) => {
+  write(KEYS.model, model)
+  useSettings.setState({ model })
+}
+
+export const setEffort = (effort: ReasoningEffort) => {
+  write(KEYS.effort, effort)
+  useSettings.setState({ effort })
 }
 
 export const setThinking = (thinking: boolean) => {

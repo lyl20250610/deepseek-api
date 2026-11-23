@@ -9,3 +9,11 @@ build/
 .env.*
 !.env.example
 tmp/
+android/.gradle/
+android/local.properties
+android/app/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+# 安装包体积大且含调试签名，放在 GitHub Releases 而非源码仓库
+release/*.apk

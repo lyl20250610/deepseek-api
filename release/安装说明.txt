@@ -1,0 +1,29 @@
+deepseek手机api版（非官方）1.1.1
+
+本次更新：
+- 输入框和设置中可切换 deepseek-flash / deepseek-v4-pro 模型。
+- 可调整思考强度（低 / 高 / 极高）。
+- 每条回复显示实际使用的模型、Token 用量和缓存命中率，点按可展开明细。
+
+一、安装
+1. 把 deepseek-mobile-api-1.1.1-debug.apk 传到 Android 手机（数据线、网盘或聊天工具均可）。
+2. 在系统设置中允许对应文件管理器/浏览器“安装未知应用”。
+3. 打开 APK 完成安装，桌面图标为蓝发鲸鱼女仆，名称为“deepseek手机api版”。
+4. 首次启动后进入“设置 → 数据管理 → API Key”，粘贴在 DeepSeek 开放平台创建的 Key：
+   https://platform.deepseek.com/api_keys
+5. 返回首页开始对话。
+
+二、版本信息
+- 包名：com.dsmobile.chat
+- 版本：1.1.1（versionCode 3）
+- 最低系统：Android 7.0（API 24）
+- 目标 API：36
+- 文件大小：15,725,200 字节
+- SHA-256：3271e6dcc5e5d840d435d8b0abae46880a5c54278ae7d462920b97eb5cfe0b1b
+
+三、注意
+- 这是 Android Debug 证书签名的调试包，适合自用和验收，不适合直接上架应用商店。
+- 本项目不是 DeepSeek 官方客户端；应用名称中的 DeepSeek 仅用于说明所接入的服务与界面来源。
+- API Key 由你自己提供，调用官方 API 会产生费用。
+- 当前环境没有 Android 真机/模拟器，APK 已完成构建、元数据、签名和对齐校验，但未做真机安装运行。
+- iPhone 可通过同一份 PWA 使用：部署 dist/ 到 HTTPS 站点后，用 Safari 打开并“添加到主屏幕”。
