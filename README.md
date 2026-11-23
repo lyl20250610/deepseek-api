@@ -11,12 +11,20 @@
 
 > 本项目不是 DeepSeek 官方发布的客户端，不代表官方立场。应用名称中的“DeepSeek”仅用于说明所接入的服务与界面来源。上游代码采用 MIT 许可证，详见 [LICENSE](LICENSE) 与 [上游说明](docs/upstream-README.zh-CN.md)。
 
-## 本次更新（1.1.0）
+## 本次更新（1.1.2）
 
-- 应用名称改为 **deepseek手机api版**，Android 桌面标签、标题、侧栏、PWA 清单与启动图统一。
-- 图标换成指定的蓝发鲸鱼女仆插画，并重新生成自适应图标、圆形图标、PWA 图标与 favicon。
-- 启动图同步换成角色插画与 `deepseek手机api版` 标题，提供浅色/深色两套。
-- 版本号升至 `1.1.0`（versionCode 2），包名仍为 `com.dsmobile.chat`；旧的 1.0.0 安装包已被替换。
+- 支持从 GitHub Pages 远程热更新前端：应用启动后自动检查 `version.json`，下载并校验更新包，重启生效；网络异常时回退到 APK 内置资源。
+- 可切换 `deepseek-flash` / `deepseek-v4-pro` 模型，调节思考强度（低 / 高 / 极高）。
+- 每条回复显示实际使用的模型、Token 用量与缓存命中率，点按可展开明细。
+- 版本号 `1.1.2`（versionCode 4），包名仍为 `com.dsmobile.chat`。
+
+### 如何发布前端更新
+
+1. 修改前端代码后提升 `package.json` 的 `version`。
+2. `git commit && git push origin main`，GitHub Actions 会自动构建并部署到 GitHub Pages。
+3. 已安装 1.1.2 及更高版本 APK 的用户启动应用后会自动下载更新，提示重启后生效。
+
+仅前端代码可热更新；涉及原生能力（权限、插件）的改动仍需发新 APK。
 
 ## 功能
 
