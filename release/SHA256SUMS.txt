@@ -1,2 +1,3 @@
 67d26f606c95fddb9c92e98ec7725b47a8d5f58f51c9e472a9722bcbd974ec3e  deepseek-mobile-api-1.1.0-debug.apk
 3271e6dcc5e5d840d435d8b0abae46880a5c54278ae7d462920b97eb5cfe0b1b  deepseek-mobile-api-1.1.1-debug.apk
+a081ba64ce421c92ceae7032d8790ee6128dbed33fe8b904d81e21c616cf4ebb  deepseek-mobile-api-1.1.2-debug.apk

@@ -1,12 +1,11 @@
-deepseek手机api版（非官方）1.1.1
+deepseek手机api版（非官方）1.1.2
 
 本次更新：
-- 输入框和设置中可切换 deepseek-flash / deepseek-v4-pro 模型。
-- 可调整思考强度（低 / 高 / 极高）。
-- 每条回复显示实际使用的模型、Token 用量和缓存命中率，点按可展开明细。
+- 新增远程热更新：应用启动后自动从 GitHub Pages 检查新版本，下载成功后提示重启生效；网络异常时继续使用内置版本，不影响正常使用。
+- 内置界面已支持模型切换（deepseek-flash / deepseek-v4-pro）、思考强度调节、Token 用量与缓存命中率显示。
 
 一、安装
-1. 把 deepseek-mobile-api-1.1.1-debug.apk 传到 Android 手机（数据线、网盘或聊天工具均可）。
+1. 把 deepseek-mobile-api-1.1.2-debug.apk 传到 Android 手机（数据线、网盘或聊天工具均可）。
 2. 在系统设置中允许对应文件管理器/浏览器“安装未知应用”。
 3. 打开 APK 完成安装，桌面图标为蓝发鲸鱼女仆，名称为“deepseek手机api版”。
 4. 首次启动后进入“设置 → 数据管理 → API Key”，粘贴在 DeepSeek 开放平台创建的 Key：
@@ -15,13 +14,20 @@ deepseek手机api版（非官方）1.1.1
 
 二、版本信息
 - 包名：com.dsmobile.chat
-- 版本：1.1.1（versionCode 3）
+- 版本：1.1.2（versionCode 4）
 - 最低系统：Android 7.0（API 24）
 - 目标 API：36
-- 文件大小：15,725,200 字节
-- SHA-256：3271e6dcc5e5d840d435d8b0abae46880a5c54278ae7d462920b97eb5cfe0b1b
+- 文件大小：18,060,850 字节
+- SHA-256：a081ba64ce421c92ceae7032d8790ee6128dbed33fe8b904d81e21c616cf4ebb
 
-三、注意
+三、远程更新说明
+- 更新源：https://lyl20250610.github.io/deepseek-api/
+- 应用启动约 1.5 秒后检查更新，仅下载完整前端资源包并校验 SHA-256。
+- 下载完成后提示“新版本已下载，重启应用后生效”；下次启动会自动从新版本目录加载界面。
+- 若 GitHub Pages 访问失败、校验不通过或解压异常，应用会继续使用 APK 内置版本。
+- 仅前端代码可热更新；涉及原生能力（权限、插件）的变更仍需安装新 APK。
+
+四、注意
 - 这是 Android Debug 证书签名的调试包，适合自用和验收，不适合直接上架应用商店。
 - 本项目不是 DeepSeek 官方客户端；应用名称中的 DeepSeek 仅用于说明所接入的服务与界面来源。
 - API Key 由你自己提供，调用官方 API 会产生费用。

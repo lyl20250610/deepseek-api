@@ -195,4 +195,5 @@ export const zh = {
   usageSearches: '联网搜索',
   usageFetches: '网页抓取',
   usageTimes: '{count} 次',
+  updateDownloaded: '新版本已下载，重启应用后生效',
 } as const

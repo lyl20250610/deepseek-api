@@ -205,4 +205,5 @@ export const en = {
   usageSearches: 'Web searches',
   usageFetches: 'Page fetches',
   usageTimes: '{count}',
+  updateDownloaded: 'Update downloaded. Restart the app to apply.',
 } satisfies Record<keyof typeof zh, string>

@@ -2,7 +2,7 @@
  * 只缓存同源静态资源；API 请求、SSE 流和跨域请求一律直连网络。
  * 升级发布时修改 CACHE_VERSION 即可清理旧缓存。
  */
-const CACHE_VERSION = 'ds-mobile-v3'
+const CACHE_VERSION = 'ds-mobile-v4'
 const CACHE_PREFIX = 'ds-mobile-'
 const APP_SHELL = new URL('./', self.registration.scope).href
 const PRECACHE = [

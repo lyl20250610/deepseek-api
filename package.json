@@ -1,6 +1,6 @@
 {
   "name": "deepseek-mobile-api",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "基于 DeepSeek 官方网页版与官方 API 的移动端聊天应用（Android + PWA）。",
   "license": "MIT",
   "private": true,
