@@ -18,7 +18,7 @@ deepseek手机api版（非官方）1.1.2
 - 最低系统：Android 7.0（API 24）
 - 目标 API：36
 - 文件大小：18,060,850 字节
-- SHA-256：a081ba64ce421c92ceae7032d8790ee6128dbed33fe8b904d81e21c616cf4ebb
+- SHA-256：bea737a464b96003adb65c72ea98f5986acf3d5e2e13698dc8303a9733446f45
 
 三、远程更新说明
 - 更新源：https://lyl20250610.github.io/deepseek-api/
